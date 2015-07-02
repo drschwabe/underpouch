@@ -1,0 +1,14 @@
+{
+  "name": "under-pouch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "under-pouch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC",
+  "private": true,
+  "dependencies": {
+    "underscore": "^1.8.3"
+  }
+}
