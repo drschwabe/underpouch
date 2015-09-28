@@ -30,7 +30,7 @@ _pouch.pluck(db, function(allDocs) {
 
 //Where: 
 _pouch.where(db, { author: "Shakespeare", year: 1611 }, function(doc) {
-    => [{title: "Cymbeline", author: "Shakespeare", year: 1611}
+    //doc = {title: "Cymbeline", author: "Shakespeare", year: 1611}
 })
 
 ```
