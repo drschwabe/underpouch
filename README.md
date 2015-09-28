@@ -1,16 +1,32 @@
-##  Under Pouch
+##  _pouch
+An underscore wrapper for querying documents in a PouchDB.  
 
-A bunch of handy functions for filtering through documents in PouchDB. Underscore powered. 
 
 ```
 var _pouch = require('under-pouch')
+var PouchDB = require('pouchdb')
 
-//native URL call to all docs
-_couch.pluck(allDocs, '')
+var db = new PouchDB('db')
+
 ```
 
-    
-ideas:  
-- Support for CouchDB (or any plain response): pass either a PouchDB object or response object (ie- the response from asking a CouchDB for allDocs)
+Now you can query PouchDB with familiar _.underscore functions: 
 
-- sweet illustration by @dalaneylagrange
+```
+//Get all docs: 
+_pouch.pluck(db, function(allDocs) {
+    //The response contains just the docs...   
+    allDocs.forEach(function(doc) {
+        //Do stuff with a doc.
+    })
+})
+
+//Where: 
+_pouch.where(db, { author: "Shakespeare", year: 1611 }, function(doc) {
+    => [{title: "Cymbeline", author: "Shakespeare", year: 1611}
+})
+
+```
+
+
+This is a WIP, only a few _.underscore functions are currently implemented.    

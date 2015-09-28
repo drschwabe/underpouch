@@ -1,13 +1,23 @@
 {
-  "name": "under-pouch",
-  "version": "1.0.0",
-  "description": "",
-  "main": "under-pouch.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "underpouch",
+  "version": "0.0.1",
+  "description": "An underscore wrapper for querying documents in a PouchDB.",
+  "main": "underpouch.js",
+  "license": "MIT",  
+  "author": {
+    "name": "Derrick Schwabe",
+    "email": "admin@nerdbusiness.com"
   },
-  "license": "ISC",
-  "private": true,
+  "homepage": "https://github.com/drschwabe/underpouch",    
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drschwabe/underpouch"
+  },
+  "keywords": [
+    "underscore",
+    "pouch",
+    "pouchdb"
+  ],  
   "dependencies": {
     "underscore": "^1.8.3"
   }
