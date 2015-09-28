@@ -3,7 +3,14 @@ An underscore wrapper for querying documents in a PouchDB.
 
 
 ```
-var _pouch = require('under-pouch')
+npm install underpouch
+```
+
+
+###usage
+
+```
+var _pouch = require('underpouch')
 var PouchDB = require('pouchdb')
 
 var db = new PouchDB('db')
