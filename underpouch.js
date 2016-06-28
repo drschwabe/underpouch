@@ -40,5 +40,23 @@ _pouch.find = function(db, truthTest, callback) {
   })
 }
 
+_pouch.extend = function(db, originalDocId, newDoc, callback) {
+  db.get(originalDocId, function(err, doc) {
+    var docRev = doc._rev
+    //Extend with the newDoc...
+    doc = _.extend(doc, newDoc)
+    //but preserve this latest rev...
+    doc._rev = docRev
+    //so we can now save it back into the db: 
+    db.put(doc, function(err, res) {
+      if(err) return console.log(err)
+      //Now update the doc once more with the latest rev...
+      doc._rev = res.rev
+      //and return it so the end user has the latest doc/rev: 
+      return callback(doc)
+    })
+  })
+}
+
 
 module.exports = _pouch
