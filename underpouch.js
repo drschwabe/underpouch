@@ -2,11 +2,15 @@ var _ = require('underscore')
 
 _pouch = {}
 
-_pouch.pluck = function(db, callback) {
+
+/* Collections------------------------------------------- */
+
+_pouch.find = function(db, truthTest, callback) {
   db.allDocs({include_docs: true}, function(err, res) {
     if(err) return console.log(err)
     docs = _.pluck(res.rows, 'doc')
-    return callback(docs)
+    doc = _.find(docs, truthTest)
+    return callback(doc)
   })
 }
 
@@ -21,7 +25,6 @@ _pouch.where = function(db, keyValuePair, callback) {
   })
 }
 
-
 _pouch.findWhere = function(db, keyValuePair, callback) {
   db.allDocs({include_docs: true}, function(err, res) {
     if(err) return console.log(err)
@@ -31,30 +34,37 @@ _pouch.findWhere = function(db, keyValuePair, callback) {
   })
 }
 
-_pouch.find = function(db, truthTest, callback) {
-  db.allDocs({include_docs: true}, function(err, res) {
-    if(err) return console.log(err)
-    docs = _.pluck(res.rows, 'doc')
-    doc = _.find(docs, truthTest)
-    return callback(doc)
+
+
+/* Objects------------------------------------------- */
+
+_pouch.extend = function(db, destinationDocId, sourceDoc, callback) {
+  db.get(destinationDocId, function(err, destinationDoc) {
+    var destinationDocRev = destinationDoc._rev
+    //Extend with the sourceDoc...
+    destinationDoc = _.extend(destinationDoc, sourceDoc)
+    //but preserve this latest rev...
+    destinationDoc._rev = destinationDocRev
+    //so we can now save it back into the db: 
+    db.put(destinationDoc, function(err, res) {
+      if(err) return console.log(err)
+      //Now update the doc once more with the latest rev...
+      destinationDoc._rev = res.rev
+      //and return it so the end user has the latest doc/rev:
+      return callback(destinationDoc)
+    })
   })
 }
 
-_pouch.extend = function(db, originalDocId, newDoc, callback) {
-  db.get(originalDocId, function(err, doc) {
-    var docRev = doc._rev
-    //Extend with the newDoc...
-    doc = _.extend(doc, newDoc)
-    //but preserve this latest rev...
-    doc._rev = docRev
-    //so we can now save it back into the db: 
-    db.put(doc, function(err, res) {
-      if(err) return console.log(err)
-      //Now update the doc once more with the latest rev...
-      doc._rev = res.rev
-      //and return it so the end user has the latest doc/rev: 
-      return callback(doc)
-    })
+
+
+/* Extras------------------------------------------- */
+
+_pouch.all = function(db, callback) {
+  db.allDocs({include_docs: true}, function(err, res) {
+    if(err) return console.log(err)
+    docs = _.pluck(res.rows, 'doc')
+    return callback(docs)
   })
 }
 
