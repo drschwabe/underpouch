@@ -1,5 +1,5 @@
 ##  _pouch
-underscore API for querying & modifying documents in a PouchDB.  
+Underscore API for querying & modifying documents in a PouchDB.  
 
 
 ```
@@ -25,7 +25,7 @@ _pouch.findWhere(db, { author: "Shakespeare", year: 1611 }, function(doc) {
 ```
   
   
-This is a WIP, only a few _.underscore functions are currently implemented.  The currently available library is as follows: 
+This is a WIP.  Only a few _.underscore functions are currently implemented.  The currently available library is as follows: 
 
 (note that all examples return docs with _id and _rev but are trimmed here for brevity)
    

@@ -26,12 +26,38 @@ _pouch.where = function(db, keyValuePair, callback) {
 }
 
 _pouch.findWhere = function(db, keyValuePair, callback) {
-  db.allDocs({include_docs: true}, function(err, res) {
-    if(err) return console.log(err)
-    docs = _.pluck(res.rows, 'doc')
-    doc = _.findWhere(docs, keyValuePair)
-    return callback(doc)
-  })
+  //Check for the pouchdb-find plugin... 
+  if(_.isFunction(db.createIndex)) { 
+    //(now we can leverage indexes for faster subsequent calls with this same keyValueParing)
+
+    var key = _.keys(keyValuePair)[0] //< (create a re-usable reference to the key)
+
+    //create an index (or do nothing if index already exists)...
+    db.createIndex({
+      index: {
+        fields: [key]
+      }
+    }, function (err, res) {
+      if(err) return console.log(err)
+      console.log(res)
+      //now perform the lookup...
+      db.find({
+        selector: keyValuePair, 
+        limit: 1
+      }, function(err2, res2) {
+        if(err2) return console.log(err2)
+        //and return just the matching doc: 
+        return callback(res2.docs[0])
+      })
+    })    
+  } else { //Otherwise just do an in-memory one time query: 
+    db.allDocs({include_docs: true}, function(err, res) {
+      if(err) return console.log(err)
+      docs = _.pluck(res.rows, 'doc')
+      doc = _.findWhere(docs, keyValuePair)
+      return callback(doc)
+    })    
+  }
 }
 
 
