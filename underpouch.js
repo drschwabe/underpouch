@@ -30,27 +30,22 @@ _pouch.findWhere = function(db, keyValuePair, callback) {
   if(_.isFunction(db.createIndex)) { 
     //(now we can leverage indexes for faster subsequent calls with this same keyValueParing)
 
-    var key = _.keys(keyValuePair)[0] //< (create a re-usable reference to the key)
-
-    //create an index (or do nothing if index already exists)...
-    db.createIndex({
-      index: {
-        fields: [key]
+    //Try to do the find...
+    db.find({
+      selector: keyValuePair, 
+      limit: 1
+    }, function(err, res) {
+      if(err) {
+        console.log('there was an error')
+        console.log(err)                 
+        return
+        //TODO: create an index if not already existing. 
       }
-    }, function (err, res) {
-      if(err) return console.log(err)
-      console.log(res)
-      //now perform the lookup...
-      db.find({
-        selector: keyValuePair, 
-        limit: 1
-      }, function(err2, res2) {
-        if(err2) return console.log(err2)
-        //and return just the matching doc: 
-        return callback(res2.docs[0])
-      })
-    })    
-  } else { //Otherwise just do an in-memory one time query: 
+      //and return just the matching doc: 
+      return callback(res.docs[0])
+    })
+
+  } else { //Otherwise just do an in-memory one time query (slow with large datasets): 
     db.allDocs({include_docs: true}, function(err, res) {
       if(err) return console.log(err)
       docs = _.pluck(res.rows, 'doc')
