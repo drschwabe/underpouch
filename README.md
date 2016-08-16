@@ -92,3 +92,14 @@ Returns an array of all the docs in the db.
     //allDocs = [{_id: 'all'},{_id: 'the'}, {_id: 'docs'}]
   })
 ```
+
+**merge**  
+`_pouch.merge(db, destinationDocId, sourceDoc, callback)`  
+Like _pouch.extend but uses [lodash's merge](https://lodash.com/docs#merge) so that child properties are merged, not overwritten. Ie: _pouch.extend will overwrite properties whereas _pouch.merge will merge them.
+
+```javascript
+  //originalDoc = { _.id: 'food', fruits: ['mango', 'lemon']}
+  _pouch.merge(db, 'food', { fruits: ['lime, kiwi'] }, function(updatedDoc) {
+    //updatedDoc = { _.id: 'food', fruits: ['mango', 'lemon', 'lime', 'kiwi']}
+  })
+```

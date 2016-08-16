@@ -1,14 +1,14 @@
 {
   "name": "underpouch",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Underscore API for querying & modifying documents in a PouchDB.",
   "main": "underpouch.js",
-  "license": "MIT",  
+  "license": "MIT",
   "author": {
     "name": "Derrick Schwabe",
     "email": "admin@nerdbusiness.com"
   },
-  "homepage": "https://github.com/drschwabe/underpouch",    
+  "homepage": "https://github.com/drschwabe/underpouch",
   "repository": {
     "type": "git",
     "url": "https://github.com/drschwabe/underpouch"
@@ -17,8 +17,9 @@
     "underscore",
     "pouch",
     "pouchdb"
-  ],  
+  ],
   "dependencies": {
+    "lodash": "^4.15.0",
     "underscore": "^1.8.3"
   }
 }

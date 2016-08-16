@@ -1,4 +1,5 @@
-var _ = require('underscore')
+var _ = require('underscore'), 
+    _merge = require('lodash/merge')
 
 _pouch = {}
 
@@ -77,6 +78,23 @@ _pouch.extend = function(db, destinationDocId, sourceDoc, callback) {
   })
 }
 
+_pouch.merge = function(db, destinationDocId, sourceDoc, callback) {
+  db.get(destinationDocId, function(err, destinationDoc) {
+    var destinationDocRev = destinationDoc._rev
+    //Merge with the sourceDoc...
+    destinationDoc = _merge(destinationDoc, sourceDoc)
+    //but preserve this latest rev...
+    destinationDoc._rev = destinationDocRev
+    //so we can now save it back into the db: 
+    db.put(destinationDoc, function(err, res) {
+      if(err) return console.log(err)
+      //Now update the doc once more with the latest rev...
+      destinationDoc._rev = res.rev
+      //and return it so the end user has the latest doc/rev:
+      return callback(destinationDoc)
+    })
+  })  
+}
 
 
 /* Extras------------------------------------------- */
