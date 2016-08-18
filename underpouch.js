@@ -15,25 +15,40 @@ _pouch.find = function(db, truthTest, callback) {
   })
 }
 
-_pouch.where = function(db, keyValuePair, callback) {
-  db.allDocs({include_docs: true}, function(err, res) {
-    if(err) return console.log(err)
-    docs = _.chain(res.rows)
-            .pluck('doc')
-            .where(keyValuePair)
-            .value()
-    return callback(docs)
-  })
+_pouch.where = function(db, properties, callback) {
+  if(_.isFunction(db.createIndex)) { 
+    db.find({
+      selector: properties
+    }, function(err, res) {
+      if(err) {
+        console.log('there was an error')
+        console.log(err)                 
+        return
+        //TODO: create an index if not already existing. 
+      }
+      return callback(res.docs)
+    })
+
+  } else {
+    db.allDocs({include_docs: true}, function(err, res) {
+      if(err) return console.log(err)
+      docs = _.chain(res.rows)
+              .pluck('doc')
+              .where(properties)
+              .value()
+      return callback(docs)
+    })
+  }  
 }
 
-_pouch.findWhere = function(db, keyValuePair, callback) {
+_pouch.findWhere = function(db, properties, callback) {
   //Check for the pouchdb-find plugin... 
   if(_.isFunction(db.createIndex)) { 
     //(now we can leverage indexes for faster subsequent calls with this same keyValueParing)
 
     //Try to do the find...
     db.find({
-      selector: keyValuePair, 
+      selector: properties, 
       limit: 1
     }, function(err, res) {
       if(err) {
@@ -50,7 +65,7 @@ _pouch.findWhere = function(db, keyValuePair, callback) {
     db.allDocs({include_docs: true}, function(err, res) {
       if(err) return console.log(err)
       docs = _.pluck(res.rows, 'doc')
-      doc = _.findWhere(docs, keyValuePair)
+      doc = _.findWhere(docs, properties)
       return callback(doc)
     })    
   }
@@ -62,6 +77,7 @@ _pouch.findWhere = function(db, keyValuePair, callback) {
 
 _pouch.extend = function(db, destinationDocId, sourceDoc, callback) {
   db.get(destinationDocId, function(err, destinationDoc) {
+    if(err) return console.log(err)
     var destinationDocRev = destinationDoc._rev
     //Extend with the sourceDoc...
     destinationDoc = _.extend(destinationDoc, sourceDoc)
@@ -80,6 +96,7 @@ _pouch.extend = function(db, destinationDocId, sourceDoc, callback) {
 
 _pouch.merge = function(db, destinationDocId, sourceDoc, callback) {
   db.get(destinationDocId, function(err, destinationDoc) {
+
     var destinationDocRev = destinationDoc._rev
     //Merge with the sourceDoc...
     destinationDoc = _merge(destinationDoc, sourceDoc)
@@ -90,6 +107,7 @@ _pouch.merge = function(db, destinationDocId, sourceDoc, callback) {
       if(err) return console.log(err)
       //Now update the doc once more with the latest rev...
       destinationDoc._rev = res.rev
+
       //and return it so the end user has the latest doc/rev:
       return callback(destinationDoc)
     })
