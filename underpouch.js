@@ -19,16 +19,10 @@ _pouch.where = function(db, properties, callback) {
   if(_.isFunction(db.createIndex)) { 
     db.find({
       selector: properties
-    }, function(err, res) {
-      if(err) {
-        console.log('there was an error')
-        console.log(err)                 
-        return
-        //TODO: create an index if not already existing. 
-      }
-      return callback(res.docs)
+    }, function(err2, res2) {
+      if(err2) return console.log(err2)                 
+      return callback(res2.docs)
     })
-
   } else {
     db.allDocs({include_docs: true}, function(err, res) {
       if(err) return console.log(err)
@@ -44,24 +38,14 @@ _pouch.where = function(db, properties, callback) {
 _pouch.findWhere = function(db, properties, callback) {
   //Check for the pouchdb-find plugin... 
   if(_.isFunction(db.createIndex)) { 
-    //(now we can leverage indexes for faster subsequent calls with this same keyValueParing)
-
-    //Try to do the find...
     db.find({
       selector: properties, 
       limit: 1
     }, function(err, res) {
-      if(err) {
-        console.log('there was an error')
-        console.log(err)                 
-        return
-        //TODO: create an index if not already existing. 
-      }
-      //and return just the matching doc: 
+      if(err) return console.log(err)
       return callback(res.docs[0])
     })
-
-  } else { //Otherwise just do an in-memory one time query (slow with large datasets): 
+  } else { //Otherwise just do an in-memory one time query:  
     db.allDocs({include_docs: true}, function(err, res) {
       if(err) return console.log(err)
       docs = _.pluck(res.rows, 'doc')
@@ -70,7 +54,6 @@ _pouch.findWhere = function(db, properties, callback) {
     })    
   }
 }
-
 
 
 /* Objects------------------------------------------- */
