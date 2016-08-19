@@ -17,18 +17,18 @@ _pouch.find = function(db, truthTest, callback) {
 
 _pouch.where = function(db, properties, callback) {
   if(_.isFunction(db.createIndex)) { 
-    db.find({
-      selector: properties
+    db.createIndex({
+      fields : _.keys(properties)
     }, function(err, res) {
-      if(err) {
-        console.log('there was an error')
-        console.log(err)                 
-        return
-        //TODO: create an index if not already existing. 
-      }
-      return callback(res.docs)
+      if(err) return console.log(err)
+      //now perform the lookup: 
+      db.find({
+        selector: properties
+      }, function(err2, res2) {
+        if(err2) return console.log(err2)                 
+        return callback(res2.docs)
+      })
     })
-
   } else {
     db.allDocs({include_docs: true}, function(err, res) {
       if(err) return console.log(err)
