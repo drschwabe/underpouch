@@ -58,28 +58,51 @@ _pouch.findWhere = function(db, properties, callback) {
 
 /* Objects------------------------------------------- */
 
+//### extend ###
+
+//Common function used by .extend and .extendPut: 
+var extendDoc = function(db, destinationDoc, sourceDoc, callback) {
+  const destinationDocRev = destinationDoc._rev
+  //Extend with the sourceDoc...
+  destinationDoc = _.extend(destinationDoc, sourceDoc)
+  //but preserve this latest rev...
+  destinationDoc._rev = destinationDocRev
+  //so we can now save it back into the db: 
+  db.put(destinationDoc, function(err, res) {
+    if(err) return console.log(err)
+    //Now update the doc once more with the latest rev...
+    destinationDoc._rev = res.rev
+    //and return it so the end user has the latest doc/rev:
+    return callback(destinationDoc)
+  })  
+}
+
 _pouch.extend = function(db, destinationDocId, sourceDoc, callback) {
   db.get(destinationDocId, function(err, destinationDoc) {
     if(err) return console.log(err)
-    var destinationDocRev = destinationDoc._rev
-    //Extend with the sourceDoc...
-    destinationDoc = _.extend(destinationDoc, sourceDoc)
-    //but preserve this latest rev...
-    destinationDoc._rev = destinationDocRev
-    //so we can now save it back into the db: 
-    db.put(destinationDoc, function(err, res) {
-      if(err) return console.log(err)
-      //Now update the doc once more with the latest rev...
-      destinationDoc._rev = res.rev
-      //and return it so the end user has the latest doc/rev:
-      return callback(destinationDoc)
-    })
+    extendDoc(db, destinationDoc, sourceDoc, callback)
   })
 }
 
+_pouch.extendPut = function(db, destinationDocId, sourceDoc, callback) {
+  db.get(destinationDocId, function(err, destinationDoc) {
+    //If the doc is missing, simply do a routine put(): 
+    if(err && err.reason == 'missing') {
+      db.put(sourceDoc, function(err, res) {
+        if(err) return console.log(err) 
+        sourceDoc._rev = res.rev
+        return callback(sourceDoc)
+      })
+    } else { //Otherwise, extend it: 
+      extendDoc(db, destinationDoc, sourceDoc, callback)      
+    } 
+  })
+}
+//#######
+
 _pouch.merge = function(db, destinationDocId, sourceDoc, callback) {
   db.get(destinationDocId, function(err, destinationDoc) {
-
+    if(err) return console.log(err)
     var destinationDocRev = destinationDoc._rev
     //Merge with the sourceDoc...
     destinationDoc = _merge(destinationDoc, sourceDoc)

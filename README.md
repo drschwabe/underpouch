@@ -103,3 +103,8 @@ Like _pouch.extend but uses [lodash's merge](https://lodash.com/docs#merge) so t
     //updatedDoc = { _.id: 'food', fruits: ['mango', 'lemon', 'lime', 'kiwi']}
   })
 ```
+
+**extendPut**
+`_pouch.extendPut(db, destinationDocId, sourceDoc, callback)`  
+
+Like _pouch.extend but `put()`'s the sourceDoc even if destination doc is not existing.
