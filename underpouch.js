@@ -131,5 +131,13 @@ _pouch.all = function(db, callback) {
   })
 }
 
+_pouch.replace = function(db, doc, callback) {
+  db.get(doc._id, function(err, existingDoc) {
+    if(err) return console.log(err)
+    doc._rev = existingDoc._rev
+    db.put(doc, callback)
+  })
+}
+
 
 module.exports = _pouch

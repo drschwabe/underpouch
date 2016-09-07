@@ -106,5 +106,9 @@ Like _pouch.extend but uses [lodash's merge](https://lodash.com/docs#merge) so t
 
 **extendPut**
 `_pouch.extendPut(db, destinationDocId, sourceDoc, callback)`  
-
 Like _pouch.extend but `put()`'s the sourceDoc even if destination doc is not existing.
+
+
+**replace**
+`_pouch.replace(db, doc, callback)`
+Overwrites an existing doc, regardless of revision (shortcut for doing db.get and then db.put).
