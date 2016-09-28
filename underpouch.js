@@ -133,7 +133,13 @@ _pouch.all = function(db, callback) {
 
 _pouch.replace = function(db, doc, callback) {
   db.get(doc._id, function(err, existingDoc) {
-    if(err) return console.log(err)
+    if(err && err.reason == 'missing') {
+      //doc does not exist, so just post it: 
+      return db.post(doc, callback)
+    } else {
+      return console.log(err)
+    }
+    //Otherwise, update the rev and then put: 
     doc._rev = existingDoc._rev
     db.put(doc, callback)
   })
