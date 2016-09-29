@@ -136,7 +136,7 @@ _pouch.replace = function(db, doc, callback) {
     if(err && err.reason == 'missing') {
       //doc does not exist, so just post it: 
       return db.post(doc, callback)
-    } else {
+    } else if(err) {
       return console.log(err)
     }
     //Otherwise, update the rev and then put: 
