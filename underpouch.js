@@ -132,6 +132,7 @@ _pouch.all = function(db, callback) {
 }
 
 _pouch.replace = function(db, doc, callback) {
+  if(doc._rev) delete doc._rev //< Discard any existing _rev. 
   db.get(doc._id, function(err, existingDoc) {
     if(err && err.reason == 'missing') {
       //doc does not exist, so just post it: 
