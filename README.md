@@ -19,7 +19,7 @@ var db = new PouchDB('db')
 Now you can query PouchDB with familiar _.underscore functions: 
 
 ```javascript
-_pouch.findWhere(db, { author: "Shakespeare", year: 1611 }, function(doc) {
+_pouch.findWhere(db, { author: "Shakespeare", year: 1611 }, function(err, doc) {
     //doc = { _id: 'example', _rev: 'xxx...', title: "Cymbeline", author: "Shakespeare", year: 1611 }
 })
 ```
@@ -37,7 +37,7 @@ This is a WIP.  Only a few _.underscore functions are currently implemented.  Th
 Looks through each doc in the db, returning the first one that passes a truth test. 
 
 ```javascript
-  _pouch.find(db, function(doc) { return doc.magicNumber % 2 == 0; }, function(doc) {
+  _pouch.find(db, function(doc) { return doc.magicNumber % 2 == 0; }, function(err, doc) {
     //doc = { name: 'magicDoc', magicNumber: 2 }
   })
 ```
@@ -48,7 +48,7 @@ Looks through each doc in the db, returning the first one that passes a truth te
 
 
 ```javascript
-  _pouch.where(playsDb, { author: "Shakespeare", year: 1611 }, function(docs) {
+  _pouch.where(playsDb, { author: "Shakespeare", year: 1611 }, function(err, docs) {
     /*docs = [{ title: "Cymbeline", author: "Shakespeare", year: 1611 },
     { title: "The Tempest", author: "Shakespeare", year: 1611 }] */
   })
@@ -60,7 +60,7 @@ Looks through each doc in the db, returning the first one that passes a truth te
  Looks through the list and returns the first value that matches all of the key-value pairs listed in properties. 
 
 ```javascript
-  _pouch.findWhere(db, {newsroom: "The New York Times"}, function(doc) {
+  _pouch.findWhere(db, {newsroom: "The New York Times"}, function(err, doc) {
     //doc = { year: 1918, newsroom: "The New York Times", reason: "For its public service in publishing in full so many official reports, documents and speeches by European statesmen relating to the progress and conduct of the war."}  
   })
 ```
@@ -75,7 +75,7 @@ Looks through each doc in the db, returning the first one that passes a truth te
 Copy all of the properties in the source doc over to the destination doc, put and return the destination doc with its updated rev.   It's in-order, so the last source will override properties of the same name in previous arguments. 
 
 ```javascript
-  _pouch.extend(db, 'user', { email: jeff@gmail.com }, function(updatedDoc) {
+  _pouch.extend(db, 'user', { email: jeff@gmail.com }, function(err, updatedDoc) {
     //updatedDoc = { email: "jeff@gmail.com", name: "Jeff", age: 35 }
   })
 ```
@@ -88,7 +88,7 @@ Copy all of the properties in the source doc over to the destination doc, put an
 Returns an array of all the docs in the db.  
 
 ```javascript
-  _pouch.all(db, function(allDocs) {
+  _pouch.all(db, function(err, allDocs) {
     //allDocs = [{_id: 'all'},{_id: 'the'}, {_id: 'docs'}]
   })
 ```
@@ -99,7 +99,7 @@ Like _pouch.extend but uses [lodash's merge](https://lodash.com/docs#merge) so t
 
 ```javascript
   //originalDoc = { _.id: 'food', fruits: ['mango', 'lemon']}
-  _pouch.merge(db, 'food', { fruits: ['lime, kiwi'] }, function(updatedDoc) {
+  _pouch.merge(db, 'food', { fruits: ['lime, kiwi'] }, function(err, updatedDoc) {
     //updatedDoc = { _.id: 'food', fruits: ['mango', 'lemon', 'lime', 'kiwi']}
   })
 ```
