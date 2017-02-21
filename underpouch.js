@@ -15,6 +15,15 @@ _pouch.find = function(db, truthTest, callback) {
   })
 }
 
+_pouch.filter = function(db, truthTest, callback) {
+  db.allDocs({include_docs: true}, function(err, res) {
+    if(err) return callback(err)
+    docs = _.pluck(res.rows, 'doc')
+    doc = _.filter(docs, truthTest)
+    return callback(null, doc)
+  })
+}
+
 _pouch.where = function(db, properties, callback) {
   if(_.isFunction(db.createIndex)) { 
     db.find({
