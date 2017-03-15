@@ -65,7 +65,8 @@ Looks through each doc in the db, returning the first one that passes a truth te
   })
 ```
 
-
+**max (WIP)**  
+Returns the doc with the maximum value.  If no iteratee function is provided, defaults to _.id (parseInt will be used). 
 
    
 #### Object Functions (for modifying docs)

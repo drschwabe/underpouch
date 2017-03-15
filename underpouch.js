@@ -64,6 +64,34 @@ _pouch.findWhere = function(db, properties, callback) {
   }
 }
 
+_pouch.max = function(db, param1, param2) {
+  var iteratee, callback
+  if(!param2) callback = param1
+  else if(param1 && parm2) {
+    iteratee = param1
+    callback = param2
+  }
+  db.allDocs({include_docs: true}, function(err, res) {
+    if(err) return callback(err)
+    if(!iteratee) {
+      var maxVal = _.chain(res.rows)
+                    .pluck('doc')
+                    .map(function(doc) {
+                      return parseInt(doc._id)
+                    })
+                    .max()
+                    .value()
+
+      var docs = _.pluck(res.rows, 'doc')
+      var doc = _.findWhere(docs, { _id : maxVal.toString() })
+      return callback(null, doc)
+    } else {
+      console.log('no iteratee')
+      //TODO
+    }
+  })   
+}
+
 
 /* Objects------------------------------------------- */
 
