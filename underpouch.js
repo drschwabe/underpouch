@@ -183,5 +183,16 @@ _pouch.replace = function(db, doc, callback) {
   })
 }
 
+_pouch.deleteDocs = function(db, callback) {
+  _pouch.all(db,(err, allDocs) => {
+    if(err) return callback(err)
+    db.bulkDocs(
+      _.map(allDocs, (doc) => _.extend(doc, { _deleted : true })
+    ), (err, res) => {
+      if(err) return callback(err)
+      callback()
+    })
+  })
+}
 
 module.exports = _pouch
