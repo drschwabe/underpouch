@@ -190,7 +190,7 @@ _pouch.deleteDocs = function(db, callback) {
       _.map(allDocs, (doc) => _.extend(doc, { _deleted : true })
     ), (err, res) => {
       if(err) return callback(err)
-      callback()
+      if(callback) return callback(null, res)
     })
   })
 }
