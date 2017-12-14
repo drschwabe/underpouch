@@ -109,6 +109,10 @@ Like _pouch.extend but uses [lodash's merge](https://lodash.com/docs#merge) so t
 `_pouch.extendPut(db, destinationDocId, sourceDoc, callback)`  
 Like _pouch.extend but `put()`'s the sourceDoc even if destination doc is not existing.
 
+**extendPutOrPost**
+`_pouch.extendPutOrPost(db, destinationDoc, sourceDoc, callback)`  
+Like _pouch.extendPut but will post() the doc if no id is provided. 
+
 
 **replace**
 `_pouch.replace(db, doc, callback)`
