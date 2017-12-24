@@ -1,8 +1,7 @@
 var test = require('tape'), 
     _ = require('underscore'), 
     PouchDB = require('pouchdb'), 
-    _p = require('./underpouch.js'), 
-    async = require('async')
+    _p = require('./underpouch.js') 
 
 PouchDB.plugin(require('pouchdb-adapter-memory'))    
 
@@ -11,7 +10,7 @@ test('_p.find', (t) => {
 
   db = new PouchDB('find', {adapter: 'memory'})
 
-  async.eachSeries([
+  db.bulkDocs([
     { num : 1 },
     { num : 2 }, 
     { num : 3 }, 
@@ -20,9 +19,7 @@ test('_p.find', (t) => {
     { num : 6 }, 
     { num : 7 }, 
     { num : 8 },         
-  ], (num, callback) => {
-    db.post(num, callback)
-  }, (err) => {
+  ], (err, res) => {
     if(err) return t.fail(err)
 
     //Predicate based on underscore's official _find example: 
