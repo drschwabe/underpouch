@@ -25,6 +25,7 @@ _pouch.filter = function(db, truthTest, callback) {
 }
 
 _pouch.where = function(db, properties, callback) {
+  //Check for the pouchdb-find plugin... 
   if(_.isFunction(db.createIndex)) { 
     db.find({
       selector: properties
@@ -32,7 +33,7 @@ _pouch.where = function(db, properties, callback) {
       if(err) return callback(err)                
       return callback(null, res.docs)
     })
-  } else {
+  } else {  //Otherwise just do an in-memory one time query: 
     db.allDocs({include_docs: true}, function(err, res) {
       if(err) return callback(err) 
       docs = _.chain(res.rows)
@@ -45,7 +46,6 @@ _pouch.where = function(db, properties, callback) {
 }
 
 _pouch.findWhere = function(db, properties, callback) {
-  //Check for the pouchdb-find plugin... 
   if(_.isFunction(db.createIndex)) { 
     db.find({
       selector: properties, 
@@ -54,7 +54,7 @@ _pouch.findWhere = function(db, properties, callback) {
       if(err) return callback(err) 
       return callback(null, res.docs[0])
     })
-  } else { //Otherwise just do an in-memory one time query:  
+  } else { 
     db.allDocs({include_docs: true}, function(err, res) {
       if(err) return callback(err) 
       docs = _.pluck(res.rows, 'doc')
@@ -87,7 +87,6 @@ _pouch.max = function(db, param1, param2) {
       return callback(null, doc)
     } else {
       console.log('no iteratee')
-      //TODO
     }
   })   
 }
@@ -218,29 +217,7 @@ _pouch.merge = function(db, destinationDocId, sourceDoc, callback) {
 }
 
 
-
 //#######
-
-_pouch.merge = function(db, destinationDocId, sourceDoc, callback) {
-  db.get(destinationDocId, function(err, destinationDoc) {
-    if(err) return callback(err) 
-    var destinationDocRev = destinationDoc._rev
-    //Merge with the sourceDoc...
-    destinationDoc = _merge(destinationDoc, sourceDoc)
-    //but preserve this latest rev...
-    destinationDoc._rev = destinationDocRev
-    //so we can now save it back into the db: 
-    db.put(destinationDoc, function(err, res) {
-      if(err) return callback(err) 
-      //Now update the doc once more with the latest rev...
-      destinationDoc._rev = res.rev
-
-      //and return it so the end user has the latest doc/rev:
-      return callback(null, destinationDoc)
-    })
-  })  
-}
-
 
 /* Extras------------------------------------------- */
 

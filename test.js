@@ -55,7 +55,7 @@ test('_p.filter', (t) => {
   })
 })
 
-test('_pouch.where', (t) => {
+test('_p.where', (t) => {
   t.plan(2)
 
   db = new PouchDB('where', {adapter: 'memory'})
@@ -79,10 +79,10 @@ test('_pouch.where', (t) => {
   })
 })
 
-test('_pouch.findWhere', (t) => {
+test('_p.findWhere', (t) => {
   t.plan(1)
 
-  db = new PouchDB('where', {adapter: 'memory'})
+  db = new PouchDB('findWhere', {adapter: 'memory'})
 
   db.bulkDocs([
     {

@@ -1,7 +1,7 @@
 {
   "name": "underpouch",
-  "version": "0.4.5c",
-  "description": "Underscore API for querying & modifying documents in a PouchDB.",
+  "version": "0.4.6",
+  "description": "An underscore API for PouchDB, plus a few extra useful functions",
   "main": "underpouch.js",
   "license": "MIT",
   "author": {
