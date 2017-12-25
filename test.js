@@ -78,3 +78,38 @@ test('_pouch.where', (t) => {
     })
   })
 })
+
+test('_pouch.findWhere', (t) => {
+  t.plan(1)
+
+  db = new PouchDB('where', {adapter: 'memory'})
+
+  db.bulkDocs([
+    {
+      year: 1918, 
+      newsroom: "The New York Times",
+      reason: "For its public service in publishing in full so many official reports, documents and speeches by European statesmen relating to the progress and conduct of the war."
+    }, 
+    {
+      year: 1998, 
+      newsroom: "Los Angeles Times", 
+      reason : "For its comprehensive coverage of a botched bank robbery and subsequent police shoot-out in North Hollywood."
+    }, 
+    {
+      year: 1922, 
+      newsroom: "New York World", 
+      reason : "On the Road to Moscow."
+    }, 
+    {
+      year: 1947, 
+      newsroom: "The New York Times",       
+      reason : "For distinguished correspondence during 1946, as exemplified by his series of articles on Russia."
+    }
+  ], (err, res) => {
+    if(err) return t.fail(err)    
+    _p.findWhere(db, {newsroom: "The New York Times"}, (err, doc) => {
+      if(err) return t.fail(err) 
+      t.ok(doc.year == 1947 || doc.year == 1918 && doc.newsroom == "The New York Times")
+    })
+  })
+})
