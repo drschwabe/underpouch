@@ -54,3 +54,27 @@ test('_p.filter', (t) => {
     })
   })
 })
+
+test('_pouch.where', (t) => {
+  t.plan(2)
+
+  db = new PouchDB('where', {adapter: 'memory'})
+
+  db.bulkDocs([
+    {title: "Tamburlaine the Great", author: "Christopher Marlowe", year: 1588},     
+    {title: "Comedy of Errors", author: "Shakespeare", year: 1589},
+    {title: "Twelfth Night", author: "Shakespeare", year: 1599}, 
+    {title: "As You Like It", author: "Shakespeare", year: 1599}, 
+    {title: "Julius Caesar", author: "Shakespeare", year: 1599}, 
+    {title: "Cymbeline", author: "Shakespeare", year: 1611},   
+    {title: "The Alchemist", author: "Ben Jonson", year: 1610}, 
+    {title: "The Tempest", author: "Shakespeare", year: 1611}
+  ], (err, res) => {
+    if(err) return t.fail(err)    
+    _p.where(db, {author: "Shakespeare", year: 1599}, (err, docs) => {
+      if(err) return t.fail(err) 
+      t.equals(docs.length, 3)
+      t.ok(_.every(docs, (doc) => doc.author == 'Shakespeare' && doc.year == 1599))
+    })
+  })
+})
