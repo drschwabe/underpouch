@@ -113,3 +113,39 @@ test('_p.findWhere', (t) => {
     })
   })
 })
+
+test('_p.max', (t) => {
+  t.plan(3)
+
+  db = new PouchDB('max', {adapter: 'memory'})
+
+  db.bulkDocs([
+    {name: 'moe', age: 40}, {name: 'larry', age: 50}, {name: 'curly', age: 60}
+  ], (err, res) => {
+    _p.max(db, (stoogeDoc) => stoogeDoc.age, (err, doc) => {
+      if(err) t.fail(err)
+      t.equals(doc.age, 60)
+    })
+
+    //Test without an iteratee: 
+    _p.max(db, (err, doc) => {
+      if(err) t.fail(err)
+      t.ok(_.isUndefined(doc)) //(_id is not a number so we expect undefined)
+    })  
+  })
+
+
+  //Test without an iteratee, but _id is a number: 
+  db2 = new PouchDB('max2', {adapter: 'memory'})
+
+  db2.bulkDocs([
+    {_id: '3' }, {_id: '9' }, {_id: '6' }
+  ], (err, res) => {
+    if(err) t.fail(err)
+    _p.max(db2, (err, doc) => {
+      if(err) t.fail(err)
+      t.equals(doc._id, '9')
+    })    
+  })
+
+})

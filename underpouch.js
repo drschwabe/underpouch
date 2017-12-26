@@ -66,8 +66,9 @@ _pouch.findWhere = function(db, properties, callback) {
 
 _pouch.max = function(db, param1, param2) {
   var iteratee, callback
-  if(!param2) callback = param1
-  else if(param1 && parm2) {
+  if(!param2) {
+    callback = param1
+  } else if(param1 && param2) {
     iteratee = param1
     callback = param2
   }
@@ -86,7 +87,9 @@ _pouch.max = function(db, param1, param2) {
       var doc = _.findWhere(docs, { _id : maxVal.toString() })
       return callback(null, doc)
     } else {
-      console.log('no iteratee')
+      var docs = _.pluck(res.rows, 'doc')
+      var maxValDoc = _.max(docs, iteratee)
+      return callback(null, maxValDoc)
     }
   })   
 }
