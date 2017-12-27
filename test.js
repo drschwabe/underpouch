@@ -154,7 +154,7 @@ test('_p.max', (t) => {
 
 /* Objects------------------------------------------- */
 
-test.only('_p.extend', (t) => {
+test('_p.extend', (t) => {
   t.plan(1)
   db = new PouchDB('extend', {adapter: 'memory'})  
   db.post({name:'moe'}, (err, res) => {
@@ -163,5 +163,14 @@ test.only('_p.extend', (t) => {
       if(err) return t.fail()
       t.equals(extendedDoc.age, 50)
     })
+  })
+})
+
+test('_p.extendPut', (t) => {
+  t.plan(1)
+  db = new PouchDB('extendPut', {adapter: 'memory'})  
+  _p.extendPut(db, 'some-id-that-doesnt-exist', {age:50}, (err, extendedDoc) => {
+    if(err) return t.fail()
+    t.equals(extendedDoc.age, 50)
   })
 })
