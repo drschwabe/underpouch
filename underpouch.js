@@ -130,11 +130,11 @@ _pouch.extendPut = function(db, destinationDocId, sourceDoc, callback) {
       //if sourceDoc does not have an id, use the first param... 
       if(!sourceDoc._id) sourceDoc._id = destinationDocId
       db.put(sourceDoc, function(err, res) {
-        if(err) return callback(err)  
+        if(err) return callback(err) 
         sourceDoc._rev = res.rev
         return callback(null, sourceDoc)
       })
-    } else { //Otherwise, extend it: 
+    } else { //Otherwise, extend it:
       extendDoc(db, destinationDoc, sourceDoc, callback)      
     } 
   })
@@ -163,6 +163,39 @@ _pouch.extendPutOrPost = (db, doc, callback) => {
     }) 
   }
 }
+
+_pouch.merge = function(db, param1, param2, param3) {
+  var destinationDocId, sourceDoc, callback
+  if(_.isObject(param1)) {
+    destinationDocId = param1._id
+    sourceDoc = param1
+    callback = param2
+  } else if(_.isString(param1)) {
+    destinationDocId = param1
+    sourceDoc = param2
+    callback = param3
+  } else {
+    return console.log('invalid params')
+  }
+  db.get(destinationDocId, function(err, destinationDoc) {
+    if(err) return callback(err) 
+    var destinationDocRev = destinationDoc._rev
+    //Merge with the sourceDoc...
+    destinationDoc = _merge(destinationDoc, sourceDoc)
+    //but preserve this latest rev...
+    destinationDoc._rev = destinationDocRev
+    //so we can now save it back into the db: 
+    db.put(destinationDoc, function(err, res) {
+      if(err) return callback(err)
+      //Now update the doc once more with the latest rev...
+      destinationDoc._rev = res.rev
+
+      //and return it so the end user has the latest doc/rev:
+      return callback(null, destinationDoc)
+    })
+  })  
+}
+
 
 _pouch.mergePutOrPost = (db, doc, callback) => {
   if(doc._id) {
@@ -200,25 +233,7 @@ _pouch.mergePutOrPost = (db, doc, callback) => {
   }
 }
 
-_pouch.merge = function(db, destinationDocId, sourceDoc, callback) {
-  db.get(destinationDocId, function(err, destinationDoc) {
-    if(err) return callback(err) 
-    var destinationDocRev = destinationDoc._rev
-    //Merge with the sourceDoc...
-    destinationDoc = _merge(destinationDoc, sourceDoc)
-    //but preserve this latest rev...
-    destinationDoc._rev = destinationDocRev
-    //so we can now save it back into the db: 
-    db.put(destinationDoc, function(err, res) {
-      if(err) return callback(err) 
-      //Now update the doc once more with the latest rev...
-      destinationDoc._rev = res.rev
 
-      //and return it so the end user has the latest doc/rev:
-      return callback(null, destinationDoc)
-    })
-  })  
-}
 
 
 //#######

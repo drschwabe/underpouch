@@ -205,3 +205,23 @@ test('_p.extendPutOrPost', (t) => {
 })
 
 
+test('_p.merge', (t) => {
+  t.plan(1)
+  db = new PouchDB('merge', {adapter: 'memory'})  
+
+  db.put({
+    _id : 'merge_me', 
+    'a': [{ 'b': 2 }, { 'd': 4 }]
+  }, (err, res) => {
+
+    _p.merge(db, {
+      _id : 'merge_me', 
+      'a': [{ 'c': 3 }, { 'e': 5 }]
+    }, (err, mergedDoc) => {
+      if(err) return t.fail()
+      t.ok(_.isEqual( mergedDoc.a, [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }]) )
+    })  
+  })
+})
+
+
