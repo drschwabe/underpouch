@@ -127,6 +127,8 @@ _pouch.extendPut = function(db, destinationDocId, sourceDoc, callback) {
   db.get(destinationDocId, function(err, destinationDoc) {
     //If the doc is missing, simply do a routine put(): 
     if(err && err.reason == 'missing') {
+      //if sourceDoc does not have an id, use the first param... 
+      if(!sourceDoc._id) sourceDoc._id = destinationDocId
       db.put(sourceDoc, function(err, res) {
         if(err) return callback(err)  
         sourceDoc._rev = res.rev

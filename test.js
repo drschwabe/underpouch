@@ -155,13 +155,14 @@ test('_p.max', (t) => {
 /* Objects------------------------------------------- */
 
 test('_p.extend', (t) => {
-  t.plan(1)
+  t.plan(2)
   db = new PouchDB('extend', {adapter: 'memory'})  
   db.post({name:'moe'}, (err, res) => {
     if(err) return t.fail()
     _p.extend(db, res.id, {age:50}, (err, extendedDoc) => {
       if(err) return t.fail()
       t.equals(extendedDoc.age, 50)
+      t.equals(extendedDoc.name, 'moe')    
     })
   })
 })
@@ -174,3 +175,33 @@ test('_p.extendPut', (t) => {
     t.equals(extendedDoc.age, 50)
   })
 })
+
+
+test('_p.extendPutOrPost', (t) => {
+  t.plan(7)
+  db = new PouchDB('extendPutOrPost', {adapter: 'memory'})  
+
+  //without an _id (post)
+  _p.extendPutOrPost(db, {age:50}, (err, extendedDoc) => {
+    if(err) return t.fail()
+    t.ok( _.isString(extendedDoc._id)) //< An _id was auto-created (via Post)
+    t.equals(extendedDoc.age, 50)
+  })
+
+  //with an id (put)
+  _p.extendPutOrPost(db, { _id:'69696969', age:50}, (err, extendedDoc) => {
+    if(err) return t.fail()
+    t.equals(extendedDoc._id, '69696969')
+    t.equals(extendedDoc.age, 50)
+
+    //with an id and existing doc: 
+    _p.extendPutOrPost(db, { _id : '69696969', sex: 'male' }, (err, extendedDoc2) => {
+      if(err) return t.fail() 
+      t.equals(extendedDoc._id, '69696969')
+      t.equals(extendedDoc.age, 50)        
+      t.equals(extendedDoc2.sex, 'male')
+    })
+  })
+})
+
+
