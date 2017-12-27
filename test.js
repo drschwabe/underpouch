@@ -5,6 +5,8 @@ var test = require('tape'),
 
 PouchDB.plugin(require('pouchdb-adapter-memory'))    
 
+/* Collections------------------------------------------- */
+
 test('_p.find', (t) => {
   t.plan(1)
 
@@ -148,4 +150,18 @@ test('_p.max', (t) => {
     })    
   })
 
+})
+
+/* Objects------------------------------------------- */
+
+test.only('_p.extend', (t) => {
+  t.plan(1)
+  db = new PouchDB('extend', {adapter: 'memory'})  
+  db.post({name:'moe'}, (err, res) => {
+    if(err) return t.fail()
+    _p.extend(db, res.id, {age:50}, (err, extendedDoc) => {
+      if(err) return t.fail()
+      t.equals(extendedDoc.age, 50)
+    })
+  })
 })

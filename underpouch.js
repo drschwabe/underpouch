@@ -198,7 +198,6 @@ _pouch.mergePutOrPost = (db, doc, callback) => {
   }
 }
 
-
 _pouch.merge = function(db, destinationDocId, sourceDoc, callback) {
   db.get(destinationDocId, function(err, destinationDoc) {
     if(err) return callback(err) 
