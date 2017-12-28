@@ -194,7 +194,7 @@ test('_p.extendPutOrPost', (t) => {
     t.equals(extendedDoc._id, '69696969')
     t.equals(extendedDoc.age, 50)
 
-    //with an id and existing doc: 
+    //with an id and existing doc (determines existing doc, gets latest rev, and puts) 
     _p.extendPutOrPost(db, { _id : '69696969', sex: 'male' }, (err, extendedDoc2) => {
       if(err) return t.fail() 
       t.equals(extendedDoc._id, '69696969')
@@ -225,3 +225,28 @@ test('_p.merge', (t) => {
 })
 
 
+test('_p.mergePutOrPost', (t) => {
+
+  t.plan(5)
+  db = new PouchDB('mergePutOrPost', {adapter: 'memory'})  
+
+  //Without an _id (post): 
+  _p.mergePutOrPost(db, {'a': [{ 'b': 2 }, { 'd': 4 }]}, (err, postedDoc) => { 
+    if(err) return t.fail() 
+    t.ok( _.isString(postedDoc._id)) //< An _id was auto-created (via Post).
+    t.ok(_.isObject( postedDoc.a)) //Original object exists in result.
+
+    //with an id (put) 
+    _p.mergePutOrPost(db, { _id : 'aaa', 'a': [{ 'b': 2 }, { 'd': 4 }]}, (err, puttedDoc) => {
+      if(err) return t.fail() 
+      t.equals(puttedDoc._id, 'aaa') 
+      t.ok(_.isObject(puttedDoc.a)) 
+
+      //with an id and existing doc (determines existing doc, gets latest rev, merges and puts) 
+      _p.mergePutOrPost(db, { _id : 'aaa', 'a': [{ 'c': 3 }, { 'e': 5 }] }, (err, mergedPuttedDoc) => {
+        if(err) return t.fail()
+        t.ok(_.isEqual( mergedPuttedDoc.a, [{ 'b': 2, 'c': 3 }, { 'd': 4, 'e': 5 }]) )
+      })
+    })
+  })
+})
