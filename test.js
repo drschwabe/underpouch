@@ -275,3 +275,28 @@ test('_p.all', (t) => {
 
   })
 })
+
+test('_p.replace', (t) => {
+  t.plan(2)
+  db = new PouchDB('replace', {adapter: 'memory'})
+
+  //Post (no doc existing)
+  _p.replace(db, {
+    _id : 'favorite-food', 
+    value : 'pizza'
+  }, (err, replacedDoc) => {
+    debugger
+    if(err) t.fail(err) 
+    t.equals(replacedDoc.value, 'pizza')
+
+    //Put (no _rev necessary)
+    _p.replace(db, { 
+      _id : 'favorite-food', 
+      value : 'ice cream'
+    }, (err, replacedDoc2) => {
+      debugger
+      if(err) t.fail(err) 
+      t.equals(replacedDoc2.value, 'ice cream')
+    })
+  })
+})

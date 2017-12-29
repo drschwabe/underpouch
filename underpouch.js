@@ -253,13 +253,20 @@ _pouch.replace = function(db, doc, callback) {
   db.get(doc._id, function(err, existingDoc) {
     if(err && err.reason == 'missing') {
       //doc does not exist, so just post it: 
-      return db.post(doc, callback)
+      db.post(doc, (err, res) => {
+        if(err) return callback(err)
+        return callback(null, _.extend(doc, { _rev : res.rev }))
+      })
     } else if(err) {
       return callback(err) 
+    } else {
+      //Otherwise, update the rev and then put: 
+      doc._rev = existingDoc._rev
+      db.put(doc,  (err, res) => {
+        if(err) return callback(err)
+        return callback(null, _.extend(doc, { _rev : res.rev }))
+      })      
     }
-    //Otherwise, update the rev and then put: 
-    doc._rev = existingDoc._rev
-    db.put(doc, callback)
   })
 }
 
