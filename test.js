@@ -300,3 +300,31 @@ test('_p.replace', (t) => {
     })
   })
 })
+
+test('_p.deleteDocs', (t) => {
+  t.plan(2)
+  db = new PouchDB('deleteDocs', {adapter: 'memory'})
+
+  db.bulkDocs([
+    { one : 'a'}, 
+    { two : 'b'}, 
+    { three : 'c'}
+  ], (err, bulkDocs) => {
+    if(err) t.fail(err)
+    db.allDocs((err, res) => {
+      if(err) t.fail(err) 
+      t.equals(res.rows.length, 3)
+
+      _p.deleteDocs(db, (err, res) => {
+        if(err) t.fail(err) 
+
+        //check all docs indeed deleted: 
+        db.allDocs((err, res) => {
+          if(err) t.fail(err) 
+          t.notOk(!res.rows)
+        })
+
+      })
+    })
+  })
+})
