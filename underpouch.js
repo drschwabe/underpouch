@@ -210,7 +210,7 @@ _pouch.mergePutOrPost = (db, doc, callback) => {
       } else { //Otherwise, extend it: 
         const destinationDocRev = destinationDoc._rev
         //Extend with the sourceDoc...
-        destinationDoc = _merge(doc, destinationDoc)
+        destinationDoc = _merge(destinationDoc, doc)
         //but preserve this latest rev...
         destinationDoc._rev = destinationDocRev
         //so we can now save it back into the db: 
