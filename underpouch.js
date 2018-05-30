@@ -270,6 +270,11 @@ _pouch.replace = function(db, doc, callback) {
   })
 }
 
+_pouch.deleteNow = function(db, doc, callback) {
+  doc._deleted = true 
+  _pouch.replace(db, doc, callback)
+}
+
 _pouch.deleteDocs = function(db, callback) {
   this.all(db,(err, allDocs) => {
     if(err) return callback(err)
