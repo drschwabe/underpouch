@@ -123,7 +123,21 @@ _pouch.extend = function(db, destinationDocId, sourceDoc, callback) {
   })
 }
 
-_pouch.extendPut = function(db, destinationDocId, sourceDoc, callback) {
+_pouch.extendPut = function(db, param2, param3, param4) {
+  var destinationDocId, 
+      sourceDoc, 
+      callback 
+
+  if(_.isString(param2)) {
+    destinationDocId = param2
+    sourceDoc = param3
+    callback = param4
+  } else {
+    destinationDocId = param2._id
+    sourceDoc = param2
+    callback = param3
+  }
+  
   db.get(destinationDocId, function(err, destinationDoc) {
     //If the doc is missing, simply do a routine put(): 
     if(err && err.reason == 'missing') {
