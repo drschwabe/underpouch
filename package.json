@@ -1,6 +1,6 @@
 {
   "name": "underpouch",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An underscore API for PouchDB with added bonuses",
   "main": "underpouch.js",
   "license": "MIT",
@@ -19,14 +19,14 @@
     "pouchdb"
   ],
   "dependencies": {
-    "lodash": "4.17.5",
-    "underscore": "1.8.3"
+    "lodash": "4.x",
+    "underscore": "1.x"
   },
   "devDependencies": {
-    "pouchdb": "6.4.1",
-    "pouchdb-adapter-memory": "6.4.1",
-    "tap-spec": "4.1.1",
-    "tape": "4.8.0"
+    "pouchdb": "6.x",
+    "pouchdb-adapter-memory": "6.x",
+    "tap-spec": "4.x",
+    "tape": "4.x"
   },
   "scripts": {
     "test": "tape test.js | tap-spec"
