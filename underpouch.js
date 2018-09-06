@@ -108,17 +108,25 @@ var extendDoc = function(db, destinationDoc, sourceDoc, callback) {
   destinationDoc._rev = destinationDocRev
   //so we can now save it back into the db: 
   db.put(destinationDoc, function(err, res) {
-    if(err) return callback(err) 
+    if(err) {
+      if(callback) return callback(err)
+      else return console.error(err)
+    }
     //Now update the doc once more with the latest rev...
     destinationDoc._rev = res.rev
     //and return it so the end user has the latest doc/rev:
-    return callback(null, destinationDoc)
+    if(callback) {
+      return callback(null, destinationDoc)      
+    }
   })  
 }
 
 _pouch.extend = function(db, destinationDocId, sourceDoc, callback) {
   db.get(destinationDocId, function(err, destinationDoc) {
-    if(err) return callback(err) 
+    if(err) {
+      if(callback) return callback(err)
+      else return console.error(err)
+    }
     extendDoc(db, destinationDoc, sourceDoc, callback)
   })
 }
