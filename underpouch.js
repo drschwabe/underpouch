@@ -148,7 +148,7 @@ _pouch.extendPut = function(db, param2, param3, param4) {
   
   db.get(destinationDocId, function(err, destinationDoc) {
     //If the doc is missing, simply do a routine put(): 
-    if(err && err.reason == 'missing') {
+    if(err && err.reason == 'missing' || err && err.reason == 'deleted') {
       //if sourceDoc does not have an id, use the first param... 
       if(!sourceDoc._id) sourceDoc._id = destinationDocId
       db.put(sourceDoc, function(err, res) {
@@ -166,7 +166,7 @@ _pouch.extendPutOrPost = (db, doc, callback) => {
   if(doc._id) {
     db.get(doc._id, function(err, destinationDoc) {
       //If the doc is missing, do a routine post(): 
-      if(err && err.reason == 'missing') {
+      if(err && err.reason == 'missing' || err && err.reason == 'deleted') {
         db.post(doc, function(err, res) {
           if(err) return callback(err)  
           doc._rev = res.rev
@@ -223,7 +223,7 @@ _pouch.mergePutOrPost = (db, doc, callback) => {
   if(doc._id) {
     db.get(doc._id, function(err, destinationDoc) {
       //If the doc is missing, do a routine post(): 
-      if(err && err.reason == 'missing') {
+      if(err && err.reason == 'missing' || err && err.reason == 'deleted') {
         db.post(doc, function(err, res) {
           if(err) return callback(err)  
           doc._rev = res.rev
@@ -273,7 +273,7 @@ _pouch.all = function(db, callback) {
 _pouch.replace = function(db, doc, callback) {
   if(doc._rev) delete doc._rev //< Discard any existing _rev. 
   db.get(doc._id, function(err, existingDoc) {
-    if(err && err.reason == 'missing') {
+    if(err && err.reason == 'missing' || err && err.reason == 'deleted') {
       //doc does not exist, so just post it: 
       db.post(doc, (err, res) => {
         if(err) return callback(err)
