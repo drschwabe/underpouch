@@ -1,6 +1,6 @@
 {
   "name": "underpouch",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An underscore API for PouchDB with added bonuses",
   "main": "underpouch.js",
   "license": "MIT",

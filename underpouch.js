@@ -292,6 +292,19 @@ _pouch.replace = function(db, doc, callback) {
   })
 }
 
+_pouch.deleteNow = function(db, docOrId, callback) {
+  var docId
+  _.isObject(docOrId) ? docId = docOrId._id : docId = docOrId
+  db.get(docId, function(err, doc) {
+    if(err) return callback(err) 
+    doc._deleted = true 
+    db.put(doc,  (err, res) => {
+      if(err) return callback(err)
+      return callback()
+    })      
+  })  
+}
+
 _pouch.deleteDocs = function(db, callback) {
   this.all(db,(err, allDocs) => {
     if(err) return callback(err)

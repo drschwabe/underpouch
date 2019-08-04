@@ -89,6 +89,17 @@ Returns an array of all the docs in the db
   })
 ```
 
+**deleteNow !**   
+`_pouch.deleteDocs(db, docOrDocId, callback)`  
+Deletes a given document without requiring revision or giving up on conflict (adds { _deleted : true })
+
+```javascript
+  let doc = { _id : 'any' , _rev : 'thing' }
+  _pouch.deleteNow(db, doc, (err) => {
+    //err if doc not found
+  })
+```
+
 **deleteDocs !**   
 `_pouch.deleteDocs(db, callback)`  
 Deletes all docs in database, without deleting the database (adds { _deleted : true } to each doc) 
