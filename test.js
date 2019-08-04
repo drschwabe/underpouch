@@ -168,11 +168,16 @@ test('_p.extend', (t) => {
 })
 
 test('_p.extendPut', (t) => {
-  t.plan(1)
-  db = new PouchDB('extendPut', {adapter: 'memory'})  
+  t.plan(2)
+  db = new PouchDB('extendPut', {adapter: 'memory'})
   _p.extendPut(db, 'some-id-that-doesnt-exist', {age:50}, (err, extendedDoc) => {
     if(err) return t.fail()
     t.equals(extendedDoc.age, 50)
+  })
+  //without an id:
+  _p.extendPut(db, { _id : 'some-other-id-that-doesnt-exist', age: 44 }, (err, extendedDoc) => {
+    if(err) return t.fail()
+    t.equals(extendedDoc._id, 'some-other-id-that-doesnt-exist')
   })
 })
 
